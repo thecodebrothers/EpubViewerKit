@@ -8,10 +8,10 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 An open source epub reader plugin written in swift
                        DESC
-  s.homepage         = 'https://github.com/JideGuru/EpubViewerKit.git'
+  s.homepage         = 'https://github.com/thecodebrothers/EpubViewerKit.git'
   s.license          = "MIT"
   s.author           = { 'jideguru' => 'guruliciousjide@gmail.com' }
-  s.source           = { :git => 'https://github.com/JideGuru/EpubViewerKit.git', :tag=>'0.1.2' }
+  s.source           = { :git => 'https://github.com/thecodebrothers/EpubViewerKit.git' }
   
   s.swift_version = '4.2'
   s.requires_arc  = true
