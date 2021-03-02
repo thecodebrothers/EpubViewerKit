@@ -1477,7 +1477,6 @@ extension FolioReaderCenter: FolioReaderPageDelegate {
     }
     
     public func pageTap(_ recognizer: UITapGestureRecognizer) {
-        page.webView?.js("setFontSize('\(folioReader.currentFontSize.cssIdentifier)')")
         // Pass the event to the centers `pageDelegate`
         pageDelegate?.pageTap?(recognizer)
     }
