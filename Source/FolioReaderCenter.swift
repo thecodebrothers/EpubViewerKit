@@ -794,21 +794,13 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         }
 
         scrollScrubber?.setSliderVal()
-
-        currentPage.webView?.js("getReadingTime()", completionHandler: { (result) in
-            if let readingTime = result {
-                self.pageIndicatorView?.totalMinutes = Int(readingTime)!
-            } else {
-                self.pageIndicatorView?.totalMinutes = 0
-            }
+        currentPage.webView?.js("getReadingTime()") { readingTime in
+            self.pageIndicatorView?.totalMinutes = Int(readingTime ?? "0")!
             self.pagesForCurrentPage(currentPage)
-
             self.delegate?.pageDidAppear?(currentPage)
             self.delegate?.pageItemChanged?(self.getCurrentPageItemNumber())
-            
             completion?()
-        })
-
+        }
     }
 
     func pagesForCurrentPage(_ page: FolioReaderPage?) {
@@ -1224,7 +1216,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
     @objc func shareChapter(_ sender: UIBarButtonItem) {
         guard let currentPage = currentPage else { return }
 
-        currentPage.webView?.js("getBodyText()", completionHandler: { (chapterText) in
+        currentPage.webView?.js("getBodyText()", completion: { (chapterText) in
             let htmlText = chapterText?.replacingOccurrences(of: "[\\n\\r]+", with: "<br />", options: .regularExpression)
             var subject = self.readerConfig.localizedShareChapterSubject
             var html = ""

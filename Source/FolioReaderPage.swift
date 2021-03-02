@@ -384,28 +384,22 @@ open class FolioReaderPage: UICollectionViewCell, WKNavigationDelegate, UIGestur
 
     @objc open func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
         self.delegate?.pageTap?(recognizer)
-        
+
         if let _navigationController = self.folioReader.readerCenter?.navigationController, (_navigationController.isNavigationBarHidden == true) {
-//            let selected = webView?.js("getSelectedText()")
-            
-            webView?.js("getSelectedText()", completionHandler: { (selected) in
-                
+            webView?.js("getSelectedText()") { selected in
                 guard (selected == nil || selected?.isEmpty == true) else {
                     return
                 }
-                
+
                 let delay = 0.4 * Double(NSEC_PER_SEC) // 0.4 seconds * nanoseconds per seconds
                 let dispatchTime = (DispatchTime.now() + (Double(Int64(delay)) / Double(NSEC_PER_SEC)))
-                
+
                 DispatchQueue.main.asyncAfter(deadline: dispatchTime, execute: {
                     if (self.shouldShowBar == true && self.menuIsVisible == false) {
                         self.folioReader.readerCenter?.toggleBars()
                     }
                 })
-            })
-
-
-
+            }
         } else if (self.readerConfig.shouldHideNavigationOnTap == true) {
             self.folioReader.readerCenter?.hideBars()
             self.menuIsVisible = false
@@ -453,12 +447,12 @@ open class FolioReaderPage: UICollectionViewCell, WKNavigationDelegate, UIGestur
     open func handleAnchor(_ anchor: String,  avoidBeginningAnchors: Bool, animated: Bool) {
         if !anchor.isEmpty {
 //            let offset = getAnchorOffset(anchor)
-            
+
             getAnchorOffset(anchor) { (result) in
                 guard (result != nil) else {return}
-                   
-                   let offset = CGFloat((result! as NSString).floatValue)
-                   
+
+                   let offset = CGFloat(result)
+
                    switch self.readerConfig.scrollDirection {
                    case .vertical, .defaultVertical:
                        let isBeginning = (offset < self.frame.forDirection(withConfiguration: self.readerConfig) * 0.5)
@@ -485,15 +479,15 @@ open class FolioReaderPage: UICollectionViewCell, WKNavigationDelegate, UIGestur
      - parameter anchor: The #anchor id
      - returns: The element offset ready to scroll
      */
-    func getAnchorOffset(_ anchor: String,completionHandler:@escaping (String?)->Void){
+    func getAnchorOffset(_ anchor: String, completion: @escaping ((CGFloat) -> ())) {
         let horizontal = self.readerConfig.scrollDirection == .horizontal
-//        if let strOffset = webView?.js("getAnchorOffset('\(anchor)', \(horizontal.description))") {
-//            return CGFloat((strOffset as NSString).floatValue)
-//        }
-
-         webView?.js("getAnchorOffset('\(anchor)', \(horizontal.description))", completionHandler:completionHandler)
-        
-//        return CGFloat(0)
+        webView?.js("getAnchorOffset('\(anchor)', \(horizontal.description))") { strOffset in
+            guard let strOffset = strOffset else {
+                completion(CGFloat(0))
+                return
+            }
+            completion(CGFloat((strOffset as NSString).floatValue))
+        }
     }
 
     // MARK: Mark ID
