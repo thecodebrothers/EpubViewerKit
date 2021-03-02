@@ -1466,15 +1466,18 @@ extension FolioReaderCenter: FolioReaderPageDelegate {
         }
         
         // Pass the event to the centers `pageDelegate`
+        page.webView?.js("setFontSize('\(folioReader.currentFontSize.cssIdentifier)')")
         pageDelegate?.pageDidLoad?(page)
     }
     
     public func pageWillLoad(_ page: FolioReaderPage) {
+        page.webView?.js("setFontSize('\(folioReader.currentFontSize.cssIdentifier)')")
         // Pass the event to the centers `pageDelegate`
         pageDelegate?.pageWillLoad?(page)
     }
     
     public func pageTap(_ recognizer: UITapGestureRecognizer) {
+        page.webView?.js("setFontSize('\(folioReader.currentFontSize.cssIdentifier)')")
         // Pass the event to the centers `pageDelegate`
         pageDelegate?.pageTap?(recognizer)
     }
